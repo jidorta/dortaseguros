@@ -2,8 +2,10 @@ package com.dorta.seguros.seguros.security;
 
 import com.dorta.seguros.seguros.model.Usuario;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -16,7 +18,7 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    private static final String SECRET_KEY =  "mi_clave_secreta_super_segura_que_debería_ser_muy_larga";
+    private static final String SECRET_KEY =  "3d3f5e8a9c7b1d2f4e6a8c0b7f9d2a1e5c3b6f7a8d9e0c1b2f4d6a7c8e9b0d1f";
 
     public JwtService() {
     }
@@ -36,12 +38,21 @@ public class JwtService {
     }
 
     private Key getSigningKey(){
-        byte[] keyBytes = SECRET_KEY.getBytes();
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+        try {
+            return Jwts.parser()
+                    .setSigningKey(SECRET_KEY)
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+        } catch (JwtException e) {
+            // aquí puedes loggear el error o manejarlo
+            return null; // o lanzar excepción personalizada
+        }
     }
 
     public <T> T extractClaim(String token, Function<Claims,T> claimsResolver){
@@ -50,9 +61,12 @@ public class JwtService {
 
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails){
+    public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        System.out.println("Extracted username from token: " + username);
+        System.out.println("UserDetails username: " + userDetails.getUsername());
+        System.out.println("Token expired? " + isTokenExpired(token));
+        return (username != null && username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
     public boolean isTokenExpired(String token){
