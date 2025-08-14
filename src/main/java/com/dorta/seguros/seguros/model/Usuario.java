@@ -1,5 +1,6 @@
 package com.dorta.seguros.seguros.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -31,7 +32,8 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
-    @OneToMany(mappedBy = "usuario")
+    @OneToMany(mappedBy = "usuario",fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<Poliza> polizas;
 
     public Usuario() {

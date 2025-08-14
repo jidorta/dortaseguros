@@ -3,6 +3,8 @@ package com.dorta.seguros.seguros.controller;
 
 import com.dorta.seguros.seguros.model.Poliza;
 import com.dorta.seguros.seguros.service.PolizaService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,22 +22,29 @@ public class PolizaController {
 
     @GetMapping
     public List<Poliza> getAll(){
-        return polizaService.findByAll();
+        return polizaService.findAll();
     }
 
     @GetMapping("/{id}")
-    public Poliza getById(@PathVariable Long id){
-        return polizaService.findById(id);
+    public ResponseEntity<Poliza> getById(@PathVariable Long id){
+        return polizaService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseThrow(()-> new RuntimeException("Poliza no encontrada con id " + id));
     }
 
     @PostMapping
-    public Poliza create(@RequestBody Poliza poliza){
-        return polizaService.save(poliza);
+    public ResponseEntity<Poliza> create(@RequestBody Poliza poliza){
+        Poliza savedPoliza = polizaService.save(poliza);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedPoliza);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id){
+    public ResponseEntity<Void> delete(@PathVariable Long id){
+        if (!polizaService.existsById(id)){
+            throw new RuntimeException("Poliza no encontrada con id " + id );
+        }
         polizaService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

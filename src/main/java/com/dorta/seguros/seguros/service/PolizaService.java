@@ -5,6 +5,7 @@ import com.dorta.seguros.seguros.repository.PolizaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PolizaService {
@@ -15,7 +16,7 @@ public class PolizaService {
         this.polizaRepository = polizaRepository;
     }
 
-    public List<Poliza> findByAll(){
+    public List<Poliza> findAll(){
         return polizaRepository.findAll();
     }
 
@@ -27,8 +28,12 @@ public class PolizaService {
         polizaRepository.deleteById(id);
     }
 
-    public Poliza findById(Long id){
-        return polizaRepository.findById(id).orElse(null);
+    public Optional<Poliza> findById(Long id){
+        return polizaRepository.findById(id);
+    }
+
+    public boolean existsById(Long id){
+        return polizaRepository.existsById(id);
     }
 
 }
