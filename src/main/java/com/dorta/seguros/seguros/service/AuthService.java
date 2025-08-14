@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -67,7 +68,8 @@ public class AuthService {
         Usuario user= new Usuario();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-
+        //AQUI AÑADIMOS DE MANERA TEMPORAL PARA AGREGAR UN USUARIO ADMIN
+        user.setRoles(Set.of(Role.ADMIN));
         if(request.isAdmin()){
             user.setRoles(Set.of(Role.ADMIN));
         }else{
@@ -92,6 +94,20 @@ public class AuthService {
         usuarioRepository.save(admin);
         String token = jwtService.generateToken(admin);
         return new AuthResponse(token);
+    }
+
+    public boolean makeUserAdmin(String username){
+         Optional<Usuario> optionalUser = usuarioRepository.findByUsername(username);
+         if(optionalUser.isPresent()){
+             Usuario user = optionalUser.get();
+             Set<Role> roles = new HashSet<>(user.getRoles());
+             roles.add(Role.ADMIN);
+             user.setRoles(roles);
+             usuarioRepository.save(user);
+             return true;
+         }else{
+             return false;
+         }
     }
 
     public AuthResponse login(AuthRequest request) {
