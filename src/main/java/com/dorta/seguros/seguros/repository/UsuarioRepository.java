@@ -9,9 +9,11 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface UsuarioRepository extends JpaRepository<Usuario,Long> {
+    Optional<Usuario> findById(Long id);
     Optional<Usuario> findByUsername(String username);
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
     @Query("SELECT u FROM Usuario u LEFT JOIN FETCH u.polizas WHERE u.username = :username")
     Optional<Usuario> findByUsernameWithPolizas(@Param("username") String username);
+
 }

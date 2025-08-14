@@ -1,6 +1,8 @@
 package com.dorta.seguros.seguros.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 import java.time.LocalDate;
@@ -14,9 +16,15 @@ public class Usuario {
     @GeneratedValue
     private Long id;
     @Column(unique = true)
+    @NotBlank(message = "El nombre de usuario es obligatorio")
     private String username;
+
+    @Email(message = "Email inválido")
     private String email;
+
+    @NotBlank(message = "La contraseña es obligatorio")
     private String password;
+
     private LocalDate fechaRegistro;
 
     @ElementCollection(fetch = FetchType.EAGER)

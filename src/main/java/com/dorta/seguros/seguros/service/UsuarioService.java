@@ -5,6 +5,7 @@ import com.dorta.seguros.seguros.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -27,7 +28,15 @@ public class UsuarioService {
         usuarioRepository.deleteById(id);
     }
 
-    public Usuario findById(Long id){
-        return usuarioRepository.findById(id).orElse(null);
+    public Optional<Usuario> findById(Long id){
+        return usuarioRepository.findById(id);
+    }
+
+    public boolean existsById(Long id){
+        return usuarioRepository.existsById(id);
+    }
+
+    public boolean existsByUsername(String username){
+        return usuarioRepository.existsByUsername(username);
     }
 }
