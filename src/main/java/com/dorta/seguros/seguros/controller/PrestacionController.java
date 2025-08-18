@@ -2,6 +2,7 @@ package com.dorta.seguros.seguros.controller;
 
 import com.dorta.seguros.seguros.model.Prestacion;
 import com.dorta.seguros.seguros.service.PrestacionService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +35,27 @@ public class PrestacionController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id){
         prestacionService.deleteById(id);
+    }
+
+    @PutMapping("/{id}")
+    public Prestacion update(@PathVariable Long id, @RequestBody Prestacion prestacion){
+
+        Prestacion existing = prestacionService.findById(id);
+        if (existing == null){
+            throw new RuntimeException("Prestacion no encontrada");
+        }
+        return existing;
+
+
+    }
+
+    @PostMapping("/poliza/{polizaId}")
+    public ResponseEntity<Prestacion>createPrestacion(
+            @PathVariable Long polizaId,
+            @RequestBody Prestacion prestacion) {
+
+        Prestacion nueva = prestacionService.addPrestacionToPoliza(polizaId, prestacion);
+        return ResponseEntity.ok(nueva);
     }
 
 }

@@ -1,26 +1,27 @@
 package com.dorta.seguros.seguros.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
 public class Prestacion {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String descripcion;
     private String tipo;
 
-    @ManyToOne
-    @JoinColumn(name= "poliza_id")
+    @ManyToOne(fetch = FetchType.LAZY)  // muchas prestaciones pueden pertenecer a una póliza
+    @JoinColumn(name = "poliza_id", nullable = false)
+    @JsonBackReference("poliza-prestaciones") // evita ciclos infinitos al serializar
     private Poliza poliza;
 
     public Prestacion() {
     }
 
-    public Prestacion(Long id, String descripcion, String tipo, Poliza poliza) {
-        this.id = id;
+    public Prestacion( String descripcion, String tipo, Poliza poliza) {
         this.descripcion = descripcion;
         this.tipo = tipo;
         this.poliza = poliza;

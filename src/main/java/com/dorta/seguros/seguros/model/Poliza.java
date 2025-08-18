@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,8 +23,9 @@ public class Poliza {
     @JsonBackReference
     private Usuario usuario;
 
-    @OneToMany(mappedBy = "poliza")
-    private List<Prestacion> prestaciones;
+    @OneToMany(mappedBy = "poliza", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference("poliza-prestaciones")
+    private List<Prestacion> prestaciones = new ArrayList<>();
 
     public Poliza() {
     }

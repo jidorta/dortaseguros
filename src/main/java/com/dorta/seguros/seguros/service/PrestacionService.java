@@ -1,6 +1,8 @@
 package com.dorta.seguros.seguros.service;
 
+import com.dorta.seguros.seguros.model.Poliza;
 import com.dorta.seguros.seguros.model.Prestacion;
+import com.dorta.seguros.seguros.repository.PolizaRepository;
 import com.dorta.seguros.seguros.repository.PrestacionRepository;
 import org.springframework.stereotype.Service;
 
@@ -10,9 +12,11 @@ import java.util.List;
 public class PrestacionService {
 
     private final PrestacionRepository prestacionRepository;
+    private final PolizaRepository polizaRepository;
 
-    public PrestacionService(PrestacionRepository prestacionRepository) {
+    public PrestacionService(PrestacionRepository prestacionRepository, PolizaRepository polizaRepository) {
         this.prestacionRepository = prestacionRepository;
+        this.polizaRepository = polizaRepository;
     }
 
     public List<Prestacion>findAll(){
@@ -29,6 +33,17 @@ public class PrestacionService {
 
     public Prestacion findById(Long id){
         return  prestacionRepository.findById(id).orElse(null);
+    }
+
+    public Prestacion addPrestacionToPoliza(Long polizaId, Prestacion prestacion){
+
+        Poliza poliza = polizaRepository.findById(polizaId)
+                .orElseThrow(()-> new RuntimeException("Poliza no encontrada"));
+
+        prestacion.setPoliza(poliza);
+        poliza.getPrestaciones().add(prestacion);
+
+        return prestacionRepository.save(prestacion);
     }
 
 }
