@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface PolizaRepository extends JpaRepository<Poliza,Long> {
 
+    Poliza findByNumeroPoliza(String numeroPoliza);
+
 
 }

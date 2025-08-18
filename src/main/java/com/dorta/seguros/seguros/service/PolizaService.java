@@ -32,6 +32,10 @@ public class PolizaService {
         return polizaRepository.findById(id);
     }
 
+    public Poliza findByNumeroPoliza(String numeroPoliza){
+        return polizaRepository.findByNumeroPoliza(numeroPoliza);
+    }
+
     public boolean existsById(Long id){
         return polizaRepository.existsById(id);
     }
